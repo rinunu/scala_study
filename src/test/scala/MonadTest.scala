@@ -1,7 +1,6 @@
 import com.sun.xml.internal.bind.v2.model.core.MaybeElement
 import org.scalatest.FunSuite
 
-
 trait Maybe[A] {
   // 文脈を保たないといけない
   def flatMap[B](f: A => Maybe[B]): Maybe[B]
@@ -69,7 +68,8 @@ class MonadTest extends FunSuite {
   }
 
   test("for 記法") {
-    // flatMap が入れ子になってる
+    // モナド値を連鎖させることができる
+    // 上の flatMap().flatMap との違いは?
     assert(
       Just(3).flatMap(x =>
         Just("!").flatMap(y =>
@@ -79,8 +79,115 @@ class MonadTest extends FunSuite {
     val res = for {
       x <- Just(3)
       y <- Just("!")
-    } yield Just(x + y)
+    } yield x + y
 
     assert(res === Just("3!"))
   }
+
+  test("パターンマッチ") {
+    // Just だと filter が必要といわれるので、 Some で。
+
+    val res = for {
+      (x :: xs) <- Some(1 :: 2 :: Nil)
+    } yield x
+    assert(res === Some(1))
+
+    // Haskell の場合は fail が使われるけど、 Scala は TODO
+    // None になったけど、なんで?
+    val res2 = for {
+      (x :: xs) <- Some(List.empty)
+    } yield {
+      println(x, xs)
+      x
+    }
+    assert(res2 === Nil)
+  }
+
+  test("モナドの満たすべき規則") {
+    // 前提
+    //
+    // List もモナド
+    //
+    // 何かするモナド関数 f, g があります
+    val f = (x: Int) => List(x, -x) // 適当に
+    val g = (x: Int) => List(x * 3, x * 2) // 適当に
+    // 何らかの値
+    val x = 1
+    // そのモナド
+    val m = List(x)
+
+
+    // ここから規則
+
+    // モナドは、値からモナド値を生成するコンストラクタと flatMap を持っており、
+    // 以下の 3つの式を満たします。
+
+    assert(constructList(x).flatMap(f) === f(x))
+    // 意味: コンストラクタは x を再現できる最小限のモナドを作るものです。
+    // 最低限のモナド値に f を適用することと、 x そのものに f を適用した結果は == でなければいけないのです
+    //
+    // 左恒等性というそうです
+
+    assert(m.flatMap(constructList) === m)
+    // 意味:  コンストラクタは、値をその値を再現できる最小限のモナド値を作るものです。
+    // flatMap にてモナド値からこの値を取り出し、再度コンストラクタで最小限のモナド値を作るので、
+    // 結果はもとのものと同じになってほしいのです。
+    //
+    // 右恒等性というそうです
+
+    // 左恒等性と右恒等性を満たすことで、「コンストラクタが値から最小限のモナド値を作る」といえるようになる
+    // ってことですか？
+
+    (m.flatMap(f).flatMap(g) === m.flatMap(f(_).flatMap(g)))
+    // 意味: 入れ子にしてるとか、してないとかは関係なく、同じ意味なんだよ〜
+    // ってことですか？
+    //
+    // 結合法則っていうそうです
+  }
+
+  test("モナドの満たすべき規則 - 別の説明") {
+    // 前提
+    //
+    // List もモナドです。
+    //
+    // モナド関数 f, g を関数合成(f してから g する関数を作る)する <=< な演算子があるとします。
+    //
+    // 以下のモナド関数があるとします
+    val f = (x: Int) => List(x, -x)
+    val g = (x: Int) => List(x * 3, x * 2)
+    val h = f <=< g
+
+    // このとき、規則は以下のように説明できるそうです
+    // みためちょっとわかりやすいかもー？
+
+    // 左恒等性
+    // (f <=< returnList) === f
+    assert((f <=< constructList)(3) === f(3))
+
+    // 右恒等性
+    // (returnList <=< f) === f
+    assert((constructList <=< f)(3) === f(3))
+
+    // 結合法則
+    // (f <=< (g <=< h)) === ((f <=< g) <=< h)
+    assert((f <=< (g <=< h))(3) === ((f <=< g) <=< h)(3))
+  }
+
+  // ここから先、説明で使う部品です
+
+  /**
+   * リストコンストラクタ
+   */
+  val constructList = (a: Int) => List(a)
+
+  class RichListMonadFunc(f: Int => List[Int]) {
+    /**
+     * List モナド関数を合成
+     */
+    def <=<(g: Int => List[Int]): Int => List[Int] =
+      x => g(x).flatMap(f)
+  }
+
+  implicit def wrap(f: Int => List[Int]): RichListMonadFunc =
+    new RichListMonadFunc(f)
 }
