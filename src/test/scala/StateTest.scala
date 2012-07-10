@@ -33,8 +33,6 @@ class StateTest extends FunSuite {
 
   // State モナド
   case class State[S, A](runState: S => (A, S)) {
-    def this(x: A) = this(s => (x, s))
-
     def flatMap[B](f: A => State[S, B]): State[S, B] = {
       val h = runState
       State(s => {
@@ -45,21 +43,20 @@ class StateTest extends FunSuite {
     }
 
     // TODO init がない代わりに、 map があるの?
-    def map(f: A => A): State[S, A] = {
-      val h = runState
-      State(s => {
-        val (a, newState) = h(s)
+    def map[B](f: A => B): State[S, B] =
+      flatMap(a => State(f(a)))
+  }
 
-        (f(a), newState)
-      })
-    }
+  object State {
+    def apply[S, A](x: A): State[S, A] = State(s => (x, s))
   }
 
   test("State モナドを使う場合") {
     def pop: State[Stack, Int] =
-      State {
-        case x :: xs => (x, xs)
-      }
+      State(a =>
+        a match {
+          case x :: xs => (x, xs)
+        })
 
     //
     def push(a: Int): State[Stack, Unit] =

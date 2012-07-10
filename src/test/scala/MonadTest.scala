@@ -69,13 +69,13 @@ class MonadTest extends FunSuite {
 
   test("for 記法") {
     // モナド値を連鎖させることができる
-    // 上の flatMap().flatMap との違いは?
     assert(
       Just(3).flatMap(x =>
         Just("!").flatMap(y =>
           Just(x + y))) === Just("3!"))
 
     // for 内包表記を使って書けるよ
+    // for を使用するためには map が必要
     val res = for {
       x <- Just(3)
       y <- Just("!")
@@ -171,6 +171,10 @@ class MonadTest extends FunSuite {
     // 結合法則
     // (f <=< (g <=< h)) === ((f <=< g) <=< h)
     assert((f <=< (g <=< h))(3) === ((f <=< g) <=< h)(3))
+  }
+
+  test("その他") {
+    // map は Haskell だと liftM
   }
 
   // ここから先、説明で使う部品です
