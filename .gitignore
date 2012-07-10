@@ -3,3 +3,5 @@ target
 /.cache
 /.idea/
 /.idea_modules/
+/project/.idea/
+/project/.idea_modules/
