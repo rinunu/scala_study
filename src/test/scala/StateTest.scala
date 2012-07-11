@@ -85,22 +85,18 @@ class StateTest extends FunSuite {
       (5, List(8, 2, 1)))
 
     // ちょっと複雑な例
-    // if するなら withFilter も必要。 とはいえ、 else かけないと思うのです。。
-    // なので、直感的にかけま。。せんでした。
     def stackStuff: State[Stack, Unit] = for {
-      _ <- pop.flatMap { a =>
-        if (a == 5) push(5)
-        else for {
-          _ <- push(3)
-          _ <- push(8)
-        } yield ()
-      }
+      a <- pop
+      _ <- if (a == 5)
+        push(5)
+      else for {
+        _ <- push(3)
+        _ <- push(8)
+      } yield ()
     } yield ()
 
     assert(stackStuff.runState(List(9, 0, 2, 1, 0)) ===
       ((), List(8, 3, 0, 2, 1, 0)))
-
-
   }
 
 }
