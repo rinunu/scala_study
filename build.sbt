@@ -10,7 +10,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "1.8" % "test",
   "com.rabbitmq" % "amqp-client" % "2.7.1",
-  "com.twitter" % "finagle-http" % "1.9.10",
+  "com.twitter" %% "finagle-http" % "3.0.0",
   "org.scalaquery" %% "scalaquery" % "0.10.0-M1",
   "mysql" % "mysql-connector-java" % "5.1.20"
   )
