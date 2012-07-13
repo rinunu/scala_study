@@ -1,5 +1,0 @@
-package finagle
-
-class TimeoutTest {
-
-}
