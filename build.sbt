@@ -8,6 +8,7 @@ resolvers ++= Seq(
         "Twitter" at "http://maven.twttr.com")
 
 libraryDependencies ++= Seq(
+  "org.specs2" %% "specs2" % "1.11" % "test",
   "org.scalatest" %% "scalatest" % "1.8" % "test",
   "com.rabbitmq" % "amqp-client" % "2.7.1",
   "com.twitter" % "finagle-http" % "1.9.10",
