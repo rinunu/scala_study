@@ -13,5 +13,9 @@ libraryDependencies ++= Seq(
   "com.rabbitmq" % "amqp-client" % "2.7.1",
   "com.twitter" % "finagle-http" % "1.9.10",
   "org.scalaquery" %% "scalaquery" % "0.10.0-M1",
+  "com.twitter" %% "twitter_future-http" % "3.0.0",
   "mysql" % "mysql-connector-java" % "5.1.20"
   )
+
+
+
