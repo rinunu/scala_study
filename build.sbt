@@ -10,6 +10,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2" % "1.11" % "test",
   "org.scalatest" %% "scalatest" % "1.8" % "test",
+  "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   "com.twitter" %% "finagle-http" % "4.0.2",
   "org.scalaquery" %% "scalaquery" % "0.10.0-M1",
   "org.clapper" %% "grizzled-slf4j" % "0.6.9",
