@@ -2,7 +2,7 @@
  * RabbitMQ を使用する際のヘルパーです。
  */
 
-package study.rabbitmq
+package rabbitmq
 
 import com.rabbitmq.client
 import com.rabbitmq.client.{Address, Connection, Channel}
@@ -27,6 +27,20 @@ case class ConnectionFactory(hosts: Seq[String]) {
   def close() {
   }
 
+  val setRequestedHeartbeat = impl.setRequestedHeartbeat _
+
+  /**
+   * 一時的な Channel を作成し、処理を行います
+   */
+  def withChannel[A](f: Channel => A): A = {
+    val connection = connect()
+    try {
+      val channel = connection.createChannel()
+      f(channel)
+    } finally {
+      connection.close()
+    }
+  }
 }
 
 class RichDelivery(impl: Delivery) {
