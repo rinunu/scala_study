@@ -18,7 +18,8 @@ class TimeoutTest extends FunSuite with Common {
     }
 
     // タイムアウトしたからといって失敗するわけではないので、もう一度待てます。
-    // 逆に言うと、タイムアウトした後も処理は継続しているわけなので、注意が必要かもですね。
+    // 逆に言うと、タイムアウトした後も処理は継続しているわけなので、
+    // 処理をやめるのであれば、明示的に cancel しないといけません。
 
     Thread.sleep(20.millis)
     assert(f.logs == Seq("a"))
