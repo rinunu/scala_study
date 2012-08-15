@@ -1,7 +1,7 @@
 package algorithm
 
 import org.scalatest.FunSuite
-import collection.mutable.ArrayBuffer
+import scala.collection.mutable.ArrayBuffer
 
 object Sort {
   def insertionSort(seq: Array[Int]): Array[Int] = {
@@ -79,6 +79,87 @@ object Sort {
     }
   }
 
+  def bubbleSort(seq: Array[Int]): Array[Int] = {
+    for (unsortedEnd <- seq.size to 1 by -1)
+      for (i <- 1 until unsortedEnd) {
+        if (seq(i - 1) > seq(i)) {
+          swap(seq, i - 1, i)
+        }
+      }
+    seq
+  }
+
+  def heapSort(seq: Array[Int]): Array[Int] = {
+    import Heap._
+    val a = buildMaxHeap(Heap(seq))
+    val b = ((a.a.size - 1) to 1 by -1).foldLeft(a) { (a, i) =>
+      swap(a.a, 0, i)
+      maxHeapify(a.copy(heapSize = a.heapSize - 1), 0)
+    }
+    b.a
+  }
+
+  // qsort []     = []
+
+  // qsort (p:xs) = qsort lt ++ [p] ++ qsort gteq
+  //where
+  // lt   = [x | x <- xs, x < p]
+  // gteq = [x | x <- xs, x >= p]
+
+  def quickSort2(a: Array[Int]): Array[Int] = {
+    def qsort(a: List[Int]): List[Int] = {
+      a match {
+        case Nil => Nil
+        case p :: xs =>
+          val lt = for (x <- xs if x < p) yield x
+          val gteq = for (x <- xs if x >= p) yield x
+          qsort(lt) ++ List(p) ++ qsort(gteq)
+      }
+    }
+    qsort(a.toList).toArray
+  }
+
+  def quickSort(a: Array[Int]): Array[Int] = {
+    // a(p, r) を分割します
+    // 小さいものと大きいものに分割します
+    // pivot の位置を返します
+    def partition(p: Int, r: Int): Int = {
+      val x = a(r)
+      // i は x より小さい値の範囲の末尾を指します
+      var i = p - 1
+      // j は i に先行し、 x より小さいものを見つけると i と値を交換します
+      for (j <- p to r - 1) {
+        if (a(j) <= x) {
+          i += 1
+          swap(a, i, j)
+        }
+      }
+      // a(i + 1) は x より大きい
+      swap(a, i + 1, r)
+      log(i + 1, a.toSeq)
+      i + 1
+    }
+
+
+    def quickSortImpl(p: Int, r: Int) {
+      log(p, r)
+      if (p < r) {
+        val q = partition(p, r)
+        quickSortImpl(p, q - 1)
+        quickSortImpl(p + 1, r)
+      }
+    }
+
+    quickSortImpl(0, a.size - 1)
+    a
+  }
+
+  def swap(seq: Array[Int], i: Int, j: Int) {
+    val tmp = seq(i)
+    seq(i) = seq(j)
+    seq(j) = tmp
+  }
+
   private def log(s: Object) {
     println(s)
     Thread.sleep(10)
@@ -104,6 +185,10 @@ trait SortTest extends FunSuite {
     assert(sort(Array(3, 5, 1, 2, 4, 6)) === Array(1, 2, 3, 4, 5, 6))
   }
 
+  test("例 354162") {
+    assert(sort(Array(3, 5, 4, 1, 6, 2)) === Array(1, 2, 3, 4, 5, 6))
+  }
+
   test("例 654321") {
     assert(sort(Array(6, 5, 4, 3, 2, 1)) === Array(1, 2, 3, 4, 5, 6))
   }
@@ -123,4 +208,19 @@ class SelectionSortTest extends FunSuite with SortTest {
 
 class MergeSortTest extends FunSuite with SortTest {
   val sort = Sort.mergeSort _
+}
+
+class BubbleSortTest extends FunSuite with SortTest {
+  val sort = Sort.bubbleSort _
+}
+
+class QuickSortTest extends FunSuite with SortTest {
+  val sort = Sort.quickSort2 _
+}
+
+class HeapSortTest extends FunSuite with SortTest {
+
+  import Heap._
+
+  val sort = Sort.heapSort _
 }
