@@ -174,8 +174,9 @@ object Sort {
     // 値 v は、 c(v) - 1 の位置に行くといいです
     val b = new Array[Int](a.size)
     for (i <- a.size - 1 to 0 by -1) {
-      b(c(a(i)) - 1) = a(i)
-      c(a(i)) -= 1
+      val v = a(i)
+      b(c(v) - 1) = v
+      c(v) -= 1
     }
     b
   }
