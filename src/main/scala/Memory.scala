@@ -1,4 +1,4 @@
-import collection.mutable.ArrayBuffer
+import scala.collection.mutable.ArrayBuffer
 import util.Random
 
 object Memory {

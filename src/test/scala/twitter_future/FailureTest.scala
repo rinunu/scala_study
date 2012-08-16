@@ -3,7 +3,7 @@ package twitter_future
 import org.scalatest.FunSuite
 import com.twitter.util.{Future, FuturePool}
 import java.util.concurrent.Executors
-import collection.mutable.ListBuffer
+import scala.collection.mutable.ListBuffer
 
 /**
  * 失敗の扱い方

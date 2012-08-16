@@ -2,7 +2,7 @@ package twitter_future
 
 import java.util.concurrent.{TimeUnit, Executors}
 import com.twitter.util._
-import collection.mutable.ListBuffer
+import scala.collection.mutable.ListBuffer
 import com.twitter.conversions.time._
 
 trait Common {

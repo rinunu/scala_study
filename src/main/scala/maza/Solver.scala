@@ -1,8 +1,8 @@
 package maza
 
 import annotation.tailrec
-import collection.mutable.ListBuffer
-import collection.mutable
+import scala.collection.mutable.ListBuffer
+import scala.collection.mutable
 
 case class Solver() {
   type Pos = Maze.Pos

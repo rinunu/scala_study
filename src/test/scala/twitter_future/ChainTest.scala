@@ -3,7 +3,7 @@ package twitter_future
 import org.scalatest.FunSuite
 import com.twitter.util.{FuturePool, Promise}
 import java.util.concurrent.Executors
-import collection.mutable.ListBuffer
+import scala.collection.mutable.ListBuffer
 
 class ChainTest extends FunSuite with Common {
 
