@@ -154,6 +154,32 @@ object Sort {
     a
   }
 
+  def countingSort(a: Array[Int]): Array[Int] = {
+    log("start!", a.toSeq)
+    // c[v] が、 値 v に対する情報を持ちます。
+    val c = new Array[Int](100) // サイズは適当にね.
+
+    // 値 v の数を数えます
+    for (i <- 0 until a.size) {
+      c(a(i)) += 1
+    }
+    log(c.toSeq)
+
+    // 各値 v より小さい値の数を数えます
+    for (i <- 1 until c.size) {
+      c(i) += c(i - 1)
+    }
+    log(c.toSeq)
+
+    // 値 v は、 c(v) - 1 の位置に行くといいです
+    val b = new Array[Int](a.size)
+    for (i <- a.size - 1 to 0 by -1) {
+      b(c(a(i)) - 1) = a(i)
+      c(a(i)) -= 1
+    }
+    b
+  }
+
   def swap(seq: Array[Int], i: Int, j: Int) {
     val tmp = seq(i)
     seq(i) = seq(j)
@@ -196,6 +222,10 @@ trait SortTest extends FunSuite {
   test("例 42856371") {
     assert(sort(Array(4, 2, 8, 5, 6, 3, 7, 1)) === Array(1, 2, 3, 4, 5, 6, 7, 8))
   }
+
+  test("例 25302303") {
+    assert(sort(Array(2, 5, 3, 0, 2, 3, 0, 3)) === Array(0, 0, 2, 2, 3, 3, 3, 5))
+  }
 }
 
 class InsertionSortTest extends FunSuite with SortTest {
@@ -216,6 +246,10 @@ class BubbleSortTest extends FunSuite with SortTest {
 
 class QuickSortTest extends FunSuite with SortTest {
   val sort = Sort.quickSort2 _
+}
+
+class CountingSortTest extends FunSuite with SortTest {
+  val sort = Sort.countingSort _
 }
 
 class HeapSortTest extends FunSuite with SortTest {
