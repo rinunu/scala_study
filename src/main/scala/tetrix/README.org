@@ -1,0 +1,3 @@
+http://eed3si9n.com/tetrix-in-scala-day0
+を写経してます。
+

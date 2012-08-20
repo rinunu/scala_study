@@ -16,7 +16,8 @@ libraryDependencies ++= Seq(
   "org.clapper" %% "grizzled-slf4j" % "0.6.9",
   "ch.qos.logback" % "logback-classic" % "1.0.0",
   "com.rabbitmq" % "amqp-client" % "2.8.4",
-  "mysql" % "mysql-connector-java" % "5.1.20"
+  "mysql" % "mysql-connector-java" % "5.1.20",
+  "org.scala-lang" % "scala-swing" % "2.9.1"
   )
 
 
