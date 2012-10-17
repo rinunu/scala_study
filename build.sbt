@@ -8,7 +8,7 @@ resolvers ++= Seq(
         "Twitter" at "http://maven.twttr.com")
 
 libraryDependencies ++= Seq(
-  "org.specs2" %% "specs2" % "1.11" % "test",
+  "org.specs2" %% "specs2" % "1.12" % "test",
   "org.scalatest" %% "scalatest" % "1.8" % "test",
   "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   "com.twitter" %% "finagle-http" % "4.0.2",
@@ -17,7 +17,8 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.0.0",
   "com.rabbitmq" % "amqp-client" % "2.8.4",
   "mysql" % "mysql-connector-java" % "5.1.20",
-  "org.scala-lang" % "scala-swing" % "2.9.1"
+  "org.scala-lang" % "scala-swing" % "2.9.1",
+  "com.typesafe.akka" % "akka-actor" % "2.0.2"
   )
 
 

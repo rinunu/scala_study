@@ -2,9 +2,67 @@ package algorithm
 
 import org.scalatest.FunSuite
 import scala.collection.mutable.ArrayBuffer
+import annotation.tailrec
+
+object MyList {
+
+  class Node[A](val v: A, var next: Node[A] = null)
+
+  def append[A](head: Node[A], n: Node[A]): Node[A] = {
+    if (head.next == null)
+      head.next = n
+    else
+      append(head.next, n)
+    head
+  }
+
+  def size(head: Node[_]): Int =
+    if (head.next == null) 1
+    else size(head.next) + 1
+
+  def copyTo[A](head: Node[A], a: Array[A], i: Int = 0): Array[A] = {
+    a(i) = head.v
+    if (head.next != null) {
+      copyTo(head.next, a, i + 1)
+    }
+    a
+  }
+}
 
 object Sort {
-  def insertionSort(seq: Array[Int]): Array[Int] = {
+  /**
+   * 0 <= a(n) < 1
+   */
+  def bucketSort(a: Array[Double]): Array[Double] = {
+    import MyList._
+    def getBucketNo(v: Double) = (v * 10).toInt
+
+    // [0, n) のバケツに、a を入れていきます
+    val n = 10
+    val b = new Array[Node[Double]](n)
+    for (v <- a) {
+      val bucketNo = getBucketNo(v)
+      log("bucketNo", bucketNo)
+      val node = new Node(v)
+      b(bucketNo) = if (b(bucketNo) == null) node
+      else append(b(bucketNo), node)
+    }
+
+    val notEmptyList = b.filter(_ != null)
+
+    for(n <- notEmptyList){
+      // TODO
+    }
+
+    val result = new Array[Double](a.size)
+    notEmptyList.foldLeft(0) { (i, node) =>
+      copyTo(node, result, i)
+      i + size(node)
+    }
+    result
+  }
+
+  def insertionSort[A <% Ordered[A]](seq: Array[A]): Array[A] = {
     for (i <- 0 until seq.size) {
       val key = seq(i)
       // key をソート済みの列 seq(0..i) に挿入する
@@ -230,7 +288,7 @@ trait SortTest extends FunSuite {
 }
 
 class InsertionSortTest extends FunSuite with SortTest {
-  val sort = Sort.insertionSort _
+  val sort = Sort.insertionSort[Int] _
 }
 
 class SelectionSortTest extends FunSuite with SortTest {
@@ -254,8 +312,57 @@ class CountingSortTest extends FunSuite with SortTest {
 }
 
 class HeapSortTest extends FunSuite with SortTest {
-
-  import Heap._
-
   val sort = Sort.heapSort _
+}
+
+class BucketSortTest extends FunSuite with SortTest {
+
+  import MyList._
+  import Sort._
+
+  // 最初に 0~1 にしますよ！！
+  // 最大値は 10 の前提です！！
+  val sort = (seq: Array[Int]) => {
+    val results = Sort.bucketSort(seq.map(_ / 10.0))
+    results.map(a => (a * 10).asInstanceOf[Int])
+  }
+
+  test("リストに追加") {
+    val a, b = new Node(1)
+    append(a, b)
+    assert(a.next === b)
+  }
+
+  test("リストに追加 - 複数要素") {
+    val a, b, c = new Node(1)
+    append(a, b)
+    append(a, c)
+    assert(a.next.next === c)
+  }
+
+  test("リストのサイズ") {
+    val a, b, c = new Node(1)
+    assert(size(a) === 1)
+
+    append(a, b)
+    append(a, c)
+    assert(size(a) === 3)
+  }
+
+  test("リストを配列に変換") {
+
+    val a = new Node(1)
+    val b = new Node(2)
+    val c = new Node(3)
+    assert(copyTo(a, new Array[Int](1)) === Array(1))
+
+    append(a, b)
+    append(a, c)
+    assert(copyTo(a, new Array[Int](3)) === Array(1, 2, 3))
+  }
+
+  test("double") {
+    assert(bucketSort(Array(0.78, 0.17, 0.39, 0.26, 0.72, 0.94, 0.21, 0.12, 0.23, 0.68)) ===
+      Array(0.12, 0.17, 0.21, 0.23, 0.26, 0.39, 0.68, 0.72, 0.78, 0.94))
+  }
 }

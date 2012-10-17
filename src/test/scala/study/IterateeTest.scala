@@ -83,10 +83,10 @@ class IterateeTest extends FunSuite {
   /**
    * enumerator の例
    *
-   * E の要素を生成し、 A を結果とする IterV に与えます。
+   * E の要素を生成し、 E => A を行う IterV に与えます。
    * 生成完了時は、その時点の IterV を返します。
    */
-  def enum[E, A](iter: IterV[E, A], e: List[E]): IterV[E, A] = (iter, e) match {
+  def enum[E, A](iter: IterV[E, A], input: List[E]): IterV[E, A] = (iter, input) match {
     case (iter, Nil) => iter
     case (iter@(Done(_, _)), _) => iter
     case (Cont(k), x :: xs) =>
